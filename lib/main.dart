@@ -7,15 +7,15 @@ void main() => runApp(
   ),
 );
 
-enum WearTher {
-  summer("assets/images/summer.jpeg"),
-  autumn("assets/images/autumn.avif"),
-  winter("assets/images/winter.jpg"),
-  spring("assets/images/spring.jpg");
+enum Weather {
+  summer("assets/summer.jpeg"),
+  autumn("assets/autumn.jpg"),
+  winter("assets/winter.jpg"),
+  spring("assets/spring.jpg");
 
   final String imagePath;
 
-  const WearTher(this.imagePath);
+  const Weather(this.imagePath);
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +24,44 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SeasonsCard();
+  }
+}
+
+class Card extends StatelessWidget {
+  final String country;
+  final Weather season;
+  final VoidCallback onTap;
+
+  const Card({
+    super.key,
+    required this.country,
+    required this.season,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Image(
+            image: AssetImage(season.imagePath),
+            width: 300,
+            height: 500,
+            fit: BoxFit.cover,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          country,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -40,20 +78,20 @@ class _SeasonsCardState extends State<SeasonsCard> {
 
   void _changeFranceSeason() {
     setState(() {
-      franceSeasonIndex = (franceSeasonIndex + 1) % WearTher.values.length;
+      franceSeasonIndex = (franceSeasonIndex + 1) % Weather.values.length;
     });
   }
 
   void _changeCambodiaSeason() {
     setState(() {
-      cambodiaSeasonIndex = (cambodiaSeasonIndex + 1) % WearTher.values.length;
+      cambodiaSeasonIndex = (cambodiaSeasonIndex + 1) % Weather.values.length;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final franceSeason = WearTher.values[franceSeasonIndex];
-    final cambodiaSeason = WearTher.values[cambodiaSeasonIndex];
+    final franceSeason = Weather.values[franceSeasonIndex];
+    final cambodiaSeason = Weather.values[cambodiaSeasonIndex];
 
     return MaterialApp(
       home: Scaffold(
@@ -61,18 +99,24 @@ class _SeasonsCardState extends State<SeasonsCard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SeasonHeader(title: 'SEASONS'),
+              const Text(
+                'SEASONS',
+                style: TextStyle(
+                  fontSize: 80,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SeasonCard(
+                  Card(
                     country: 'FRANCE',
                     season: franceSeason,
                     onTap: _changeFranceSeason,
                   ),
                   const SizedBox(width: 20),
-                  SeasonCard(
+                  Card(
                     country: 'CAMBODIA',
                     season: cambodiaSeason,
                     onTap: _changeCambodiaSeason,
@@ -87,56 +131,4 @@ class _SeasonsCardState extends State<SeasonsCard> {
   }
 }
 
-class SeasonHeader extends StatelessWidget {
-  final String title;
 
-  const SeasonHeader({super.key, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-}
-
-class SeasonCard extends StatelessWidget {
-  final String country;
-  final WearTher season;
-  final VoidCallback onTap;
-
-  const SeasonCard({
-    super.key,
-    required this.country,
-    required this.season,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Image(
-            image: AssetImage(season.imagePath),
-            width: 120,
-            height: 120,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          country,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-}
